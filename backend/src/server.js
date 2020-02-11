@@ -12,7 +12,7 @@ mongoose.connect("mongodb+srv://aleffe:aleffe@omnistack-7pvf4.mongodb.net/semana
 });
 //req.query = para filtros
 //req.params = para edição e delete 
-// req.body = para criação e edição de registros
+//req.body = para criação e edição de registros
 //Sequelize = utilizar com sql server 
 
 app.use(cors()); // passando o endereço limita a api forncer dados somente ao endereço informado 
@@ -21,4 +21,3 @@ app.use('/files', express.static(path.resolve(__dirname, '..', 'uploads')));
 app.use(routes);
 
 app.listen(3333);
-
