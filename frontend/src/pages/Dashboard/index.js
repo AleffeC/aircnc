@@ -1,10 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../services/api';
+import socketio from 'socket.io-client';
 import './styles.css';
 
 export default function Dashboard() {
     const [spots, setSpots] = useState([]);
+    const [requests, setRequest] = useState([]);
+
+    const user_id = localStorage.getItem('user');
+    const socket = useMemo(() => socketio('http://localhost:3333', {
+        query: { user_id }, 
+    }), [user_id]); // colocando fora do useEffect como tentativa de execução unica
+
+    useEffect(() => {
+        // socket.on('hello', data => {
+        //     console.log(data);
+        // }); // "escuta" oque vem da mensagem hello enviada do backend e mostra em tempo real
+
+        socket.on('booking_request', data => {
+            setRequest([...requests, data]);
+       }); 
+    }, []);
+
 
     useEffect(() => {
         async function loadSpots() {
@@ -20,6 +38,17 @@ export default function Dashboard() {
     }, []);
     return (
         <>
+            <ul className="notifications">
+                {requests.map(request => (
+                    <li key={request._id}>
+                        <p>
+                             <strong>{requests.user.email}</strong> está solicitando uma reserva em <strong>{requests.spot.company}</strong> para a data: <strong>{requests.date}</strong>
+                        </p>
+                        <button className="accept">ACEITAR</button>
+                        <button className="reject">REJEITAR</button>
+                    </li>
+                ))}                      
+            </ul>
             <ul className="spot-list">
                 { spots.map(spot => (
                     <li key={spot._id}>
